@@ -3,5 +3,10 @@
 g_currentDir=$(dirname ${BASH_SOURCE[0]})
 g_port=$(ls /dev/ttyAC* | head -n 1)
 
-${g_currentDir}/compile -u --port ${g_port} $@
+#${g_currentDir}/compile -u --port ${g_port} $@
+arduino-cli upload \
+            -b arduino:avr:uno \
+            --port ${g_port} \
+            --input ${g_currentDir}/bin/burger \
+            $@
 

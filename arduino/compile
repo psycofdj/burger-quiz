@@ -1,5 +1,12 @@
 #!/bin/bash
 
 g_currentDir=$(dirname ${BASH_SOURCE[0]})
+mkdir -p ${g_currentDir}/bin
 
-arduino-cli compile -b arduino:avr:uno ${g_currentDir} --warnings all --libraries ${g_currentDir}/libs/ $@
+arduino-cli compile \
+            -b arduino:avr:uno \
+            --warnings all \
+            --libraries ${g_currentDir}/libs/ \
+            ${g_currentDir} \
+            --output ${g_currentDir}/bin/burger \
+            $@

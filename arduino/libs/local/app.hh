@@ -7,7 +7,7 @@
 
 class App : public Updatable {
 public:
-  static const duration_t mcsBuzzTime = 0;
+  static const duration_t mcsBuzzTime = 6000;
 
   enum state {
     loading = -2,
@@ -24,8 +24,10 @@ private:
     mLastWinner(0),
     mBuzzerMayo(id::d2),
     mBuzzerKetchup(id::d3),
-    mLightRed(id::d6),
-    mLightBlue(id::d7),
+    mBlueLED(id::d7),
+    mGreenLED(id::d6),
+    mRedLamp(id::d5),
+    mYellowLamp(id::d4),
     mButtons({ Button(id::d8), Button(id::d9), Button(id::d10), Button(id::d11), Button(id::d12), Button(id::d13) })
   {
     for (std::size_t cIdx = 0; cIdx < 6; cIdx++) {
@@ -65,7 +67,7 @@ public:
     gSerial.begin(9600);
     ArduinoSTL_Serial.connect(gSerial);
     std::sout << "app::initialize" << std::endl;
-    mLightRed.on();
+    mGreenLED.on();
   }
 
   void negociate(void)
@@ -83,7 +85,7 @@ public:
   void ready(void)
   {
     std::sout << "app::ready" << std::endl;
-    mLightBlue.on();
+    mBlueLED.on();
     mState = state::idle;
     mTargetState = idle;
     mLastTime = millis();
@@ -96,8 +98,8 @@ public:
     mLastTime  = lNow;
 
     update(lNow, lDelta);
-    mLightBlue.update(lNow, lDelta);
-    mLightRed.update(lNow, lDelta);
+    mGreenLED.update(lNow, lDelta);
+    mBlueLED.update(lNow, lDelta);
     for (std::size_t cIdx = 0; cIdx < 5; cIdx++) {
       mButtons[cIdx].update(lNow, lDelta);
     }
@@ -119,9 +121,11 @@ public:
     switch (mState) {
     case state::mayo:
       std::sout << "buzzer::mayo" << std::endl;
+      mYellowLamp.on();
       break;
     case state::ketchup:
       std::sout << "buzzer::ketchup" << std::endl;
+      mRedLamp.on();
       break;
     case state::loading:
     case state::idle:
@@ -134,15 +138,17 @@ public:
     flash(25);
     mState = state::idle;
     mTargetState = state::idle;
+    mRedLamp.off();
+    mYellowLamp.off();
   }
 
   void flash(duration_t pSpeed = 150) {
     for (size_t cIdx = 0; cIdx < 10; cIdx++) {
-      mLightBlue.off();
-      mLightRed.off();
+      mGreenLED.off();
+      mBlueLED.off();
       delay(pSpeed);
-      mLightBlue.on();
-      mLightRed.on();
+      mGreenLED.on();
+      mBlueLED.on();
       delay(pSpeed);
     }
   }
@@ -162,8 +168,10 @@ private:
   time_t     mLastWinner;
   Buzzer     mBuzzerMayo;
   Buzzer     mBuzzerKetchup;
-  Light      mLightRed;
-  Light      mLightBlue;
+  Light      mBlueLED;
+  Light      mGreenLED;
+  Light      mRedLamp;
+  Light      mYellowLamp;
   Button     mButtons[6];
 
 private:

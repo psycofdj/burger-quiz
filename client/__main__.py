@@ -14,15 +14,23 @@ class App:
   def __init__(self):
     self.m_dev = self.get_dev()
     self.m_vlc = vlc.Instance("--no-xlib")
+    self.m_ready = False
 
   def error(self, p_msg, *p_args, **p_kwds):
-    l_msg = p_msg.format(p_args, p_kwds)
-    sys.stderr.write("%s\n" % l_msg)
-    if p_kwds.get("exit", True):
-      sys.exit(1)
+    l_msg = p_msg % p_args
+    l_msg = l_msg % p_kwds
+    sys.stdout.write("[error]: %s\n" % l_msg)
+    sys.exit(1)
+
+  def debug(self, p_msg, *p_args, **p_kwds):
+    l_msg = p_msg % p_args
+    l_msg = l_msg % p_kwds
+    sys.stdout.write("[debug]: %s\n" % l_msg)
 
   def get_dev(self):
     try:
+      l_port = self.get_port()
+      self.debug("connecting serial %s", l_port)
       return serial.Serial(
         baudrate=9600,
         parity=serial.PARITY_NONE,
@@ -53,9 +61,14 @@ class App:
     l_value = ""
     while True:
       l_byte = self.m_dev.read(1)
+      if len(l_byte) == 0:
+        if not self.m_ready:
+          self.error("unable to initialize connection")
+        continue
+      self.m_ready = True
       l_char = l_byte.decode("utf-8")
       if l_char == "\n":
-        print(l_value)
+        self.debug("received: %s", l_value)
         if l_value == "app::negociating":
           self.negociate()
         else:
@@ -81,7 +94,7 @@ class App:
     l_sound = l_map.get(p_msg, None)
     if l_sound:
       l_file = os.path.join(l_baseDir, l_sound)
-      print("-> playing: %s" % l_sound)
+      self.debug("-> playing: %s" % l_sound)
       self.async_play(l_file)
 
   def async_play(self, p_path):
