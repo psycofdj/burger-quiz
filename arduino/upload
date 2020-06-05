@@ -1,0 +1,6 @@
+#!/bin/bash
+
+l_port=$(ls /dev/ttyAC* | head -n 1)
+
+./compile -u --port ${l_port} $@
+
