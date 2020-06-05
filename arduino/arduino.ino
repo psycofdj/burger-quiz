@@ -1,6 +1,4 @@
 #include <perso.h>
-#include "common.hh"
-#include "serial.hh"
 #include "app.hh"
 
 void setup() {
