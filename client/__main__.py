@@ -6,12 +6,14 @@ import playsound
 import serial
 import sys
 import glob
+import vlc
 
 # ------------------------------------------------------------------------------
 
 class App:
   def __init__(self):
     self.m_dev = self.get_dev()
+    self.m_vlc = vlc.Instance("--no-xlib")
 
   def error(self, p_msg, *p_args, **p_kwds):
     l_msg = p_msg.format(p_args, p_kwds)
@@ -83,8 +85,14 @@ class App:
       self.async_play(l_file)
 
   def async_play(self, p_path):
-    l_proc = multiprocessing.Process(play, args=(p_path,))
-    l_proc.start()
+    print("-> start")
+    l_player = self.m_vlc.media_player_new()
+    l_player.set_media(self.m_vlc.media_new(p_path))
+    l_player.play()
+    print("-> end")
+
+    # l_proc = multiprocessing.Process(target=play, args=(p_path,))
+    # l_proc.start()
 
 # ------------------------------------------------------------------------------
 

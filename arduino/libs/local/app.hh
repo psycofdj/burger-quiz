@@ -21,7 +21,7 @@ private:
     mState(state::loading),
     mTargetState(state::idle),
     mLastWinner(0),
-    mLightGreen(6),
+    mLightBlue(6),
     mLightRed(7),
     mButtons({ Button(8), Button(9), Button(10), Button(11), Button(12) })
   {
@@ -57,7 +57,7 @@ public:
     ArduinoSTL_Serial.connect(gSerial);
     std::sout << "app::initialize" << std::endl;
 
-    mLightGreen.activate();
+    mLightBlue.activate();
     pinMode(2, INPUT_PULLUP);
     pinMode(3, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(2), [](void) {
@@ -73,7 +73,11 @@ public:
     std::sout << "app::negociating" << std::endl;
     char l_buf[16] = { 0x0 };
     std::sin.read(l_buf, 15);
-    std::sout << "got [" << std::string(l_buf, 15) << "]" << std::endl;
+    std::string l_value(l_buf, 13);
+    if (l_value != "client::ready") {
+      std::sout << "unexpected client message: [" << l_value << "]" << std::endl;
+      exit(1);
+    }
   }
 
   void ready(void)
@@ -91,7 +95,7 @@ public:
     mLastTime  = lNow;
 
     update(lNow, lDelta);
-    mLightGreen.update(lNow, lDelta);
+    mLightBlue.update(lNow, lDelta);
     mLightRed.update(lNow, lDelta);
     for (std::size_t cIdx = 0; cIdx < 5; cIdx++) {
       mButtons[cIdx].update(lNow, lDelta);
@@ -114,11 +118,9 @@ public:
     switch (mState) {
     case state::mayo:
       std::sout << "buzzer::mayo" << std::endl;
-      mLightGreen.activate();
       break;
     case state::ketchup:
       std::sout << "buzzer::ketchup" << std::endl;
-      mLightRed.activate();
       break;
     case state::loading:
     case state::idle:
@@ -135,11 +137,12 @@ public:
 
   void flash(duration_t pSpeed = 150) {
     for (size_t cIdx = 0; cIdx < 10; cIdx++) {
-      mLightGreen.deactivate();
+      mLightBlue.deactivate();
       mLightRed.deactivate();
       delay(pSpeed);
-      mLightGreen.activate();
+      mLightBlue.activate();
       mLightRed.activate();
+      delay(pSpeed);
     }
   }
 
@@ -156,7 +159,7 @@ private:
   state      mState;
   state      mTargetState;
   time_t     mLastWinner;
-  Light      mLightGreen;
+  Light      mLightBlue;
   Light      mLightRed;
   Button     mButtons[5];
 
