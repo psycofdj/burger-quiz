@@ -22,7 +22,7 @@ private:
     mState(state::loading),
     mTargetState(state::idle),
     mLastWinner(0),
-    mLightYellow(6),
+    mLightGreen(6),
     mLightRed(7),
     mButtons({ Button(8), Button(9), Button(10), Button(11), Button(12) })
   {
@@ -49,10 +49,18 @@ public:
 
   void setup(void)
   {
+    initialize();
+    negociate();
+    ready();
+  }
+
+  void initialize(void)
+  {
     gSerial.begin(9600);
     ArduinoSTL_Serial.connect(gSerial);
+    std::sout << "app::initialize" << std::endl;
 
-    std::sout << "app::setup" << std::endl;
+    mLightGreen.activate();
     pinMode(2, INPUT_PULLUP);
     pinMode(3, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(2), [](void) {
@@ -63,6 +71,22 @@ public:
       }, RISING);
   }
 
+  void negociate(void)
+  {
+    std::sout << "app::negociating" << std::endl;
+    char l_buf[16] = { 0x0 };
+    std::sin.read(l_buf, 15);
+    std::sout << "got [" << std::string(l_buf, 15) << "]" << std::endl;
+  }
+
+  void ready(void)
+  {
+    std::sout << "app::ready" << std::endl;
+    mLightRed.activate();
+    mState = state::idle;
+    mTargetState = idle;
+  }
+
   void loop(void)
   {
     time_t      lNow   = millis();
@@ -71,7 +95,7 @@ public:
     mFirstLoop = false;
 
     update(lNow, lDelta);
-    mLightYellow.update(lNow, lDelta);
+    mLightGreen.update(lNow, lDelta);
     mLightRed.update(lNow, lDelta);
     for (std::size_t cIdx = 0; cIdx < 5; cIdx++) {
       mButtons[cIdx].update(lNow, lDelta);
@@ -94,7 +118,7 @@ public:
     switch (mState) {
     case state::mayo:
       std::sout << "buzzer::mayo" << std::endl;
-      mLightYellow.activate();
+      mLightGreen.activate();
       break;
     case state::ketchup:
       std::sout << "buzzer::ketchup" << std::endl;
@@ -106,31 +130,20 @@ public:
     }
   }
 
-  void ready(void)
-  {
-    std::sout << "app::ready" << std::endl;
-    mState = state::idle;
-    mTargetState = idle;
-    flash(25);
-  }
-
   void reset(void) {
     std::sout << "app::reset" << std::endl;
     mState = state::idle;
     mTargetState = state::idle;
-    mLightRed.deactivate();
-    mLightYellow.deactivate();
     flash(25);
   }
 
   void flash(duration_t pSpeed = 150) {
     for (size_t cIdx = 0; cIdx < 10; cIdx++) {
-      mLightYellow.activate();
-      delay(pSpeed);
-      mLightYellow.deactivate();
-      mLightRed.activate();
-      delay(pSpeed);
+      mLightGreen.deactivate();
       mLightRed.deactivate();
+      delay(pSpeed);
+      mLightGreen.activate();
+      mLightRed.activate();
     }
   }
 
@@ -148,7 +161,7 @@ private:
   state      mState;
   state      mTargetState;
   time_t     mLastWinner;
-  Light      mLightYellow;
+  Light      mLightGreen;
   Light      mLightRed;
   Button     mButtons[5];
 

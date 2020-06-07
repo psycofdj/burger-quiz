@@ -1,6 +1,7 @@
 #!/bin/bash
 
-l_port=$(ls /dev/ttyAC* | head -n 1)
+g_currentDir=$(dirname ${BASH_SOURCE[0]})
+g_port=$(ls /dev/ttyAC* | head -n 1)
 
-./compile -u --port ${l_port} $@
+${g_currentDir}/compile -u --port ${g_port} $@
 
