@@ -1,10 +1,15 @@
 #pragma once
 #include <cassert>
 
+/**
+ ** Code copied from https://www.codeproject.com/Articles/313312/Cplusplus11-Lambda-Storage-Without-libcplusplus
+ ** Thanks And Baxter
+ ** 16 Jan 2012 (CPOL)
+ */
+
 // LambdaExecutor is an internal class that adds the ability to execute to
 // Lambdas. This functionality is separated because it is the only thing
 // that needed to be specialized (by return type).
-
 // generateExecutor or receiveExecutor must be called after constructing,
 // before use
 template<typename T> class LambdaExecutor {};

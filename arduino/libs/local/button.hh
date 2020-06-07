@@ -2,13 +2,10 @@
 #include "common.hh"
 #include "object.hh"
 #include "serial.hh"
-#include "lambda.hh"
 
 class Button : public Object {
 public:
   const static duration_t mcs_minLastDeltaMS = 100;
-
-  typedef Lambda<void(void)> t_callback;
 
   enum state {
     unknown,
@@ -17,12 +14,11 @@ public:
   };
 
 public:
-  Button(pin_t pPin):
-    Object(pPin),
+  Button(id pID):
+    Object(pID, mode::input),
     mState(state::unknown),
     mLastEvent(0)
   {
-    pinMode(mPin, INPUT);
     mState = readState();
   }
 
@@ -49,21 +45,23 @@ public:
     }
   }
 
-  void onPressed(t_callback pCallback) {
+  void onPressed(t_callback pCallback)
+  {
     m_pressedCallback = pCallback;
   }
 
-  void onReleased(t_callback pCallback) {
+  void onReleased(t_callback pCallback)
+  {
     m_releasedCallback = pCallback;
   }
 
 private:
-  state readState(void) {
-    if (HIGH == digitalRead(mPin)) {
+  state readState(void)
+  {
+    if (mPin.isHigh()) {
       return state::pressed;
-    } else {
-      return state::released;
     }
+    return state::released;
   }
 
 private:

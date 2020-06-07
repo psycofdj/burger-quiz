@@ -3,10 +3,11 @@
 #include "serial.hh"
 #include "light.hh"
 #include "button.hh"
+#include "buzzer.hh"
 
 class App : public Updatable {
 public:
-  static const duration_t mcsBuzzTime = 2000;
+  static const duration_t mcsBuzzTime = 0;
 
   enum state {
     loading = -2,
@@ -21,9 +22,11 @@ private:
     mState(state::loading),
     mTargetState(state::idle),
     mLastWinner(0),
-    mLightBlue(6),
-    mLightRed(7),
-    mButtons({ Button(8), Button(9), Button(10), Button(11), Button(12) })
+    mBuzzerMayo(id::d2),
+    mBuzzerKetchup(id::d3),
+    mLightRed(id::d4),
+    mLightBlue(id::d5),
+    mButtons({ Button(id::d8), Button(id::d9), Button(id::d10), Button(id::d11), Button(id::d12) })
   {
     for (std::size_t cIdx = 0; cIdx < 5; cIdx++) {
       mButtons[cIdx].onPressed([cIdx]{
@@ -33,6 +36,12 @@ private:
           std::sout << "button" << cIdx << "::released" << std::endl;
         });
     }
+    mBuzzerMayo.onTriggered([this](void) {
+        this->onBuzzerPressed(App::state::mayo);
+      });
+    mBuzzerKetchup.onTriggered([this](void) {
+        this->onBuzzerPressed(App::state::ketchup);
+      });
   }
 
 public:
@@ -56,16 +65,7 @@ public:
     gSerial.begin(9600);
     ArduinoSTL_Serial.connect(gSerial);
     std::sout << "app::initialize" << std::endl;
-
-    mLightBlue.activate();
-    pinMode(2, INPUT_PULLUP);
-    pinMode(3, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(2), [](void) {
-        App::get().onBuzzerPressed(App::state::mayo);
-      }, RISING);
-    attachInterrupt(digitalPinToInterrupt(3), [](void) {
-        App::get().onBuzzerPressed(App::state::ketchup);
-      }, RISING);
+    mLightRed.on();
   }
 
   void negociate(void)
@@ -83,9 +83,10 @@ public:
   void ready(void)
   {
     std::sout << "app::ready" << std::endl;
-    mLightRed.activate();
+    mLightBlue.on();
     mState = state::idle;
     mTargetState = idle;
+    mLastTime = millis();
   }
 
   void loop(void)
@@ -130,18 +131,18 @@ public:
 
   void reset(void) {
     std::sout << "app::reset" << std::endl;
+    flash(25);
     mState = state::idle;
     mTargetState = state::idle;
-    flash(25);
   }
 
   void flash(duration_t pSpeed = 150) {
     for (size_t cIdx = 0; cIdx < 10; cIdx++) {
-      mLightBlue.deactivate();
-      mLightRed.deactivate();
+      mLightBlue.off();
+      mLightRed.off();
       delay(pSpeed);
-      mLightBlue.activate();
-      mLightRed.activate();
+      mLightBlue.on();
+      mLightRed.on();
       delay(pSpeed);
     }
   }
@@ -159,8 +160,10 @@ private:
   state      mState;
   state      mTargetState;
   time_t     mLastWinner;
-  Light      mLightBlue;
+  Buzzer     mBuzzerMayo;
+  Buzzer     mBuzzerKetchup;
   Light      mLightRed;
+  Light      mLightBlue;
   Button     mButtons[5];
 
 private:

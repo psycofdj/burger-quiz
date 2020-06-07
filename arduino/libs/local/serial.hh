@@ -1,5 +1,8 @@
 #pragma once
-#include <SoftwareSerial.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+# include <SoftwareSerial.h>
+#pragma GCC diagnostic pop
 
 SoftwareSerial gSerial(0, 1);
 

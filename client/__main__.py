@@ -1,11 +1,11 @@
 # ------------------------------------------------------------------------------
 
 import os
-import multiprocessing
-import playsound
-import serial
 import sys
 import glob
+import time
+import playsound
+import serial
 import vlc
 
 # ------------------------------------------------------------------------------
@@ -73,8 +73,8 @@ class App:
       "button1::pressed" : "sel-ou-poivre.mp3",
       "button2::pressed" : "menus.mp3",
       "button3::pressed" : "addition.mp3",
-      # "button4::pressed" : "",
-      # "button5::pressed" : "",
+      "button4::pressed" : "",
+      "button5::pressed" : "",
       "buzzer::mayo"     : "buzz-mayo.mp3",
       "buzzer::ketchup"  : "buzz-ketchup.mp3"
     }
@@ -85,14 +85,9 @@ class App:
       self.async_play(l_file)
 
   def async_play(self, p_path):
-    print("-> start")
     l_player = self.m_vlc.media_player_new()
     l_player.set_media(self.m_vlc.media_new(p_path))
     l_player.play()
-    print("-> end")
-
-    # l_proc = multiprocessing.Process(target=play, args=(p_path,))
-    # l_proc.start()
 
 # ------------------------------------------------------------------------------
 
@@ -101,7 +96,6 @@ def play(p_file):
 
 def main():
   l_app = App()
-  #l_app.negociate()
   l_app.listen()
 
 if __name__ == "__main__":
