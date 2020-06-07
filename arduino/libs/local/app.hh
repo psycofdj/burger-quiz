@@ -17,7 +17,6 @@ public:
 
 private:
   App(void):
-    mFirstLoop(true),
     mLastTime(0),
     mState(state::loading),
     mTargetState(state::idle),
@@ -45,8 +44,6 @@ public:
   }
 
 public:
-  bool isFirstLoop(void) const { return mFirstLoop; }
-
   void setup(void)
   {
     initialize();
@@ -92,7 +89,6 @@ public:
     time_t      lNow   = millis();
     duration_t  lDelta = lNow - mLastTime;
     mLastTime  = lNow;
-    mFirstLoop = false;
 
     update(lNow, lDelta);
     mLightGreen.update(lNow, lDelta);
@@ -156,7 +152,6 @@ public:
   }
 
 private:
-  bool       mFirstLoop;
   time_t     mLastTime;
   state      mState;
   state      mTargetState;

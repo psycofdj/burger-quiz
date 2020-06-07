@@ -6,10 +6,5 @@ void setup() {
 }
 
 void loop() {
-  App& lApp = App::get();
-
-  if (true == lApp.isFirstLoop()) {
-    lApp.ready();
-  }
-  lApp.loop();
+  App::get().loop();
 }
