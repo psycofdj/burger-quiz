@@ -24,11 +24,11 @@ private:
     mLastWinner(0),
     mBuzzerMayo(id::d2),
     mBuzzerKetchup(id::d3),
-    mLightRed(id::d4),
-    mLightBlue(id::d5),
-    mButtons({ Button(id::d8), Button(id::d9), Button(id::d10), Button(id::d11), Button(id::d12) })
+    mLightRed(id::d6),
+    mLightBlue(id::d7),
+    mButtons({ Button(id::d8), Button(id::d9), Button(id::d10), Button(id::d11), Button(id::d12), Button(id::d13) })
   {
-    for (std::size_t cIdx = 0; cIdx < 5; cIdx++) {
+    for (std::size_t cIdx = 0; cIdx < 6; cIdx++) {
       mButtons[cIdx].onPressed([cIdx]{
           std::sout << "button" << cIdx << "::pressed" << std::endl;
         });
@@ -164,7 +164,7 @@ private:
   Buzzer     mBuzzerKetchup;
   Light      mLightRed;
   Light      mLightBlue;
-  Button     mButtons[5];
+  Button     mButtons[6];
 
 private:
   static App* msInstance;
