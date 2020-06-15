@@ -6,10 +6,10 @@
 class Buzzer {
 public:
   Buzzer(id pID) :
-    mPin(pID, mode::input_pullup)
+    mPin(pID, mode::input)
   {
     auto& l_handler = Interrupt::get();
-    l_handler.store(pID, [this](void) {
+    l_handler.store(pID, isr::falling, [this](void) {
         this->m_tiggerCallback();
       });
   }

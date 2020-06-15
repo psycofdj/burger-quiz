@@ -15,10 +15,10 @@ private:
    ** Use template parameter as a trick the parameter without need to capture it
    */
   template<id ID> struct helper {
-    static bool attach(void) {
-      attachInterrupt(digitalPinToInterrupt(ID), [](void) {
+    static bool attach(isr pISR) {
+      attachInterrupt(digitalPinToInterrupt(static_cast<int>(ID)), [](void) {
           Interrupt::get().interrupt(ID);
-        }, RISING);
+        }, static_cast<uint8_t>(pISR));
       return true;
     }
   };
@@ -36,7 +36,7 @@ private:
   // run stored function callback for given pin ID
   void interrupt(id pID)
   {
-    m_handlers[pID]();
+    m_handlers[static_cast<uint8_t>(pID)]();
   }
 
 public:
@@ -57,24 +57,24 @@ public:
    ** Returned value is pure syntax sugar that allows to use the function breaking power of
    ** the statement in the enumeration switch
    */
-  bool store(id pID, t_callback p_callback)
+  bool store(id pID, isr pISR, t_callback p_callback)
   {
-    m_handlers[pID] = p_callback;
+    m_handlers[static_cast<uint8_t>(pID)] = p_callback;
     switch (pID) {
-    case id::d0:  return helper<id::d0>::attach();
-    case id::d1:  return helper<id::d1>::attach();
-    case id::d2:  return helper<id::d2>::attach();
-    case id::d3:  return helper<id::d3>::attach();
-    case id::d4:  return helper<id::d4>::attach();
-    case id::d5:  return helper<id::d5>::attach();
-    case id::d6:  return helper<id::d6>::attach();
-    case id::d7:  return helper<id::d7>::attach();
-    case id::d8:  return helper<id::d8>::attach();
-    case id::d9:  return helper<id::d9>::attach();
-    case id::d10: return helper<id::d10>::attach();
-    case id::d11: return helper<id::d11>::attach();
-    case id::d12: return helper<id::d12>::attach();
-    case id::d13: return helper<id::d13>::attach();
+    case id::d0:  return helper<id::d0>::attach(pISR);
+    case id::d1:  return helper<id::d1>::attach(pISR);
+    case id::d2:  return helper<id::d2>::attach(pISR);
+    case id::d3:  return helper<id::d3>::attach(pISR);
+    case id::d4:  return helper<id::d4>::attach(pISR);
+    case id::d5:  return helper<id::d5>::attach(pISR);
+    case id::d6:  return helper<id::d6>::attach(pISR);
+    case id::d7:  return helper<id::d7>::attach(pISR);
+    case id::d8:  return helper<id::d8>::attach(pISR);
+    case id::d9:  return helper<id::d9>::attach(pISR);
+    case id::d10: return helper<id::d10>::attach(pISR);
+    case id::d11: return helper<id::d11>::attach(pISR);
+    case id::d12: return helper<id::d12>::attach(pISR);
+    case id::d13: return helper<id::d13>::attach(pISR);
     }
     return false;
   }

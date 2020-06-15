@@ -19,7 +19,7 @@ typedef Lambda<void(void)> t_callback;
 /**
  ** @brief Represent the board digital pin indexes
  */
-enum id {
+enum class id : int8_t {
   d0 = 0,
   d1 = 1,
   d2 = 2,
@@ -39,7 +39,7 @@ enum id {
 /**
  ** @brief Represent the board digital pin modes
  */
-enum mode {
+enum class mode : uint8_t {
   input        = INPUT,
   output       = OUTPUT,
   input_pullup = INPUT_PULLUP,
@@ -49,10 +49,22 @@ enum mode {
 /**
  ** @brief Represent signal status
  */
-enum signal {
+enum class signal : uint8_t {
   low  = LOW,
   high = HIGH,
 };
+
+
+/**
+ ** @brief Represent signal status
+ */
+enum class isr : uint8_t {
+  low     = LOW,
+  change  = CHANGE,
+  raising = RISING,
+  falling = FALLING,
+};
+
 
 // Local Variables:
 // ispell-local-dictionary: "american"
