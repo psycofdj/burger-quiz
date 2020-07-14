@@ -69,6 +69,7 @@ function run {
   sleep 15
   pulse_set_source ${PULSE_SOURCE_NAME}
   pulse_set_sink ${PULSE_SINK_NAME}
+  pactl set-sink-volume ${PULSE_SINK_NAME} 100%
   pactl stat | grep "Default Sink:"
 
   log "starting client"
