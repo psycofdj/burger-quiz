@@ -66,7 +66,7 @@ function run {
   export XDG_RUNTIME_DIR=/run/user/${USERID}
   export PYTHONPATH=${HOME}/burger-quiz/
 
-  sleep 15
+  sleep 30
   pulse_set_source ${PULSE_SOURCE_NAME}
   pulse_set_sink ${PULSE_SINK_NAME}
   pactl set-sink-volume ${PULSE_SINK_NAME} 100%
