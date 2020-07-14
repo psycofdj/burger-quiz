@@ -86,7 +86,7 @@ class App:
       "button1::pressed" : "sel-ou-poivre.mp3",
       "button2::pressed" : "menus.mp3",
       "button3::pressed" : "addition.mp3",
-      "button4::pressed" : "",
+      "button4::pressed" : "arrete.mp3",
       "button5::pressed" : "",
       "buzzer::mayo"     : "buzz-mayo.mp3",
       "buzzer::ketchup"  : "buzz-ketchup.mp3"
